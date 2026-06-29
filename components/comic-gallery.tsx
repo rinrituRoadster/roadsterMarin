@@ -39,6 +39,7 @@ export function ComicGallery({
     [items, lastImageSrc]
   );
   const [currentIndex, setCurrentIndex] = useState(0);
+  const stripRef = useRef<HTMLDivElement | null>(null);
   const thumbRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const isFirst = currentIndex === 0;
@@ -46,11 +47,19 @@ export function ComicGallery({
 
   useEffect(() => {
     const activeThumb = thumbRefs.current[currentIndex];
+    const strip = stripRef.current;
 
-    activeThumb?.scrollIntoView({
-      behavior: "smooth",
-      inline: "center",
-      block: "nearest"
+    if (!activeThumb || !strip) {
+      return;
+    }
+
+    const thumbLeft = activeThumb.offsetLeft;
+    const thumbWidth = activeThumb.offsetWidth;
+    const targetLeft = thumbLeft - strip.clientWidth / 2 + thumbWidth / 2;
+
+    strip.scrollTo({
+      left: Math.max(targetLeft, 0),
+      behavior: "smooth"
     });
   }, [currentIndex]);
 
@@ -68,7 +77,7 @@ export function ComicGallery({
 
   return (
     <div className="space-y-5">
-      <div className="overflow-hidden rounded-[28px] border border-white/10 bg-white/5 p-2 shadow-float backdrop-blur-md">
+      <div className="overflow-hidden rounded-[18px] border border-white/10 bg-white/5 p-1 shadow-float backdrop-blur-md sm:rounded-[28px] sm:p-2">
         <button
           type="button"
           onClick={(event) => {
@@ -82,12 +91,12 @@ export function ComicGallery({
 
             showPrevious();
           }}
-          className="block w-full overflow-hidden rounded-[24px] text-left"
+          className="block w-full overflow-hidden rounded-[14px] text-left sm:rounded-[24px]"
         >
           <img
             src={galleryItems[currentIndex].src}
             alt={galleryItems[currentIndex].alt}
-            className="block w-full rounded-[24px] object-cover"
+            className="block w-full rounded-[14px] object-cover sm:rounded-[24px]"
           />
         </button>
       </div>
@@ -127,7 +136,10 @@ export function ComicGallery({
         </button>
       </div>
 
-      <div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-color:rgba(223,244,255,0.45)_transparent] [scrollbar-width:thin]">
+      <div
+        ref={stripRef}
+        className="flex gap-2 overflow-x-auto pb-2 [scrollbar-color:rgba(223,244,255,0.45)_transparent] [scrollbar-width:thin] sm:gap-3"
+      >
         {galleryItems.map((item, index) => (
           <button
             key={item.id}
@@ -136,7 +148,7 @@ export function ComicGallery({
             }}
             type="button"
             onClick={() => setCurrentIndex(index)}
-            className={`relative shrink-0 overflow-hidden rounded-[18px] border transition ${
+            className={`relative shrink-0 overflow-hidden rounded-[14px] border transition sm:rounded-[18px] ${
               currentIndex === index
                 ? "border-mist/70 bg-white/10"
                 : "border-white/10 bg-white/5 hover:border-white/30"
@@ -145,7 +157,7 @@ export function ComicGallery({
             <img
               src={item.src}
               alt={item.alt}
-              className="h-24 w-20 object-cover sm:h-28 sm:w-24"
+              className="h-20 w-[4.5rem] object-cover sm:h-28 sm:w-24"
             />
             <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#040b19] to-transparent px-2 py-2 text-left text-[10px] tracking-[0.24em] text-white/80">
               {String(index + 1).padStart(2, "0")}
