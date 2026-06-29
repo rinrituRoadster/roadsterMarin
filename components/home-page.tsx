@@ -127,11 +127,10 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
                 Comics
               </p>
               <h2 className="mt-3 text-[1rem] font-medium leading-[2.1] text-white">
-                4コマを、夜風の速度でめくる。
+                横スライドと下部バーで先の話数まで移動できます。
               </h2>
               <p className="mt-3 text-[0.78rem] leading-[2.35] text-white/65">
-                無料で読める4コマ漫画として、横スライドと下部バーで先の話数まで移動できます。
-                無料漫画、無料まんがを探している人にも届くように、静かな導線でまとめています。
+                （原作小説はcomming soon...!）
               </p>
             </div>
           </RevealSection>
