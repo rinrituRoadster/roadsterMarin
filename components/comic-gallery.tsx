@@ -77,7 +77,7 @@ export function ComicGallery({
 
   return (
     <div className="space-y-5">
-      <div className="overflow-hidden rounded-[18px] border border-white/10 bg-white/5 p-1 shadow-float backdrop-blur-md sm:rounded-[28px] sm:p-2">
+      <div className="-mx-4 overflow-hidden rounded-[12px] border border-white/10 bg-white/5 p-[2px] shadow-float backdrop-blur-md sm:mx-0 sm:rounded-[28px] sm:p-2">
         <button
           type="button"
           onClick={(event) => {
@@ -91,12 +91,12 @@ export function ComicGallery({
 
             showPrevious();
           }}
-          className="block w-full overflow-hidden rounded-[14px] text-left sm:rounded-[24px]"
+          className="block w-full overflow-hidden rounded-[8px] text-left sm:rounded-[24px]"
         >
           <img
             src={galleryItems[currentIndex].src}
             alt={galleryItems[currentIndex].alt}
-            className="block w-full rounded-[14px] object-cover sm:rounded-[24px]"
+            className="block w-full rounded-[8px] object-cover sm:rounded-[24px]"
           />
         </button>
       </div>
