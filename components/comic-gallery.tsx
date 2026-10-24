@@ -16,6 +16,9 @@ type GalleryItem = {
   kind: "comic" | "last";
 };
 
+const ITEMS_PER_PAGE = 5;
+const READ_PROGRESS_KEY = "marin-last-read";
+
 export function ComicGallery({
   items,
   lastImageSrc,
@@ -39,11 +42,49 @@ export function ComicGallery({
     [items, lastImageSrc]
   );
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [hasRestoredProgress, setHasRestoredProgress] = useState(false);
   const stripRef = useRef<HTMLDivElement | null>(null);
   const thumbRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === galleryItems.length - 1;
+  const pageStart =
+    Math.floor(currentIndex / ITEMS_PER_PAGE) * ITEMS_PER_PAGE;
+  const visibleItems = galleryItems.slice(
+    pageStart,
+    pageStart + ITEMS_PER_PAGE
+  );
+
+  useEffect(() => {
+    try {
+      const savedIndex = Number.parseInt(
+        window.localStorage.getItem(READ_PROGRESS_KEY) ?? "",
+        10
+      );
+
+      if (Number.isInteger(savedIndex)) {
+        setCurrentIndex(
+          Math.min(Math.max(savedIndex, 0), galleryItems.length - 1)
+        );
+      }
+    } catch {
+      // Ignore storage restrictions and start from the first comic.
+    } finally {
+      setHasRestoredProgress(true);
+    }
+  }, [galleryItems.length]);
+
+  useEffect(() => {
+    if (!hasRestoredProgress) {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(READ_PROGRESS_KEY, String(currentIndex));
+    } catch {
+      // Ignore storage restrictions without interrupting comic navigation.
+    }
+  }, [currentIndex, hasRestoredProgress]);
 
   useEffect(() => {
     const activeThumb = thumbRefs.current[currentIndex];
@@ -140,30 +181,35 @@ export function ComicGallery({
         ref={stripRef}
         className="flex gap-2 overflow-x-auto pb-2 [scrollbar-color:rgba(223,244,255,0.45)_transparent] [scrollbar-width:thin] sm:gap-3"
       >
-        {galleryItems.map((item, index) => (
-          <button
-            key={item.id}
-            ref={(node) => {
-              thumbRefs.current[index] = node;
-            }}
-            type="button"
-            onClick={() => setCurrentIndex(index)}
-            className={`relative shrink-0 overflow-hidden rounded-[14px] border transition sm:rounded-[18px] ${
-              currentIndex === index
-                ? "border-mist/70 bg-white/10"
-                : "border-white/10 bg-white/5 hover:border-white/30"
-            }`}
-          >
-            <img
-              src={item.src}
-              alt={item.alt}
-              className="h-20 w-[4.5rem] object-cover sm:h-28 sm:w-24"
-            />
-            <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#040b19] to-transparent px-2 py-2 text-left text-[10px] tracking-[0.24em] text-white/80">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-          </button>
-        ))}
+        {visibleItems.map((item, visibleIndex) => {
+          const index = pageStart + visibleIndex;
+
+          return (
+            <button
+              key={item.id}
+              ref={(node) => {
+                thumbRefs.current[index] = node;
+              }}
+              type="button"
+              onClick={() => setCurrentIndex(index)}
+              className={`relative shrink-0 overflow-hidden rounded-[14px] border transition sm:rounded-[18px] ${
+                currentIndex === index
+                  ? "border-mist/70 bg-white/10"
+                  : "border-white/10 bg-white/5 hover:border-white/30"
+              }`}
+            >
+              <img
+                src={item.src}
+                alt={item.alt}
+                loading="lazy"
+                className="h-20 w-[4.5rem] object-cover sm:h-28 sm:w-24"
+              />
+              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#040b19] to-transparent px-2 py-2 text-left text-[10px] tracking-[0.24em] text-white/80">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
