@@ -73,7 +73,7 @@ async function requestComic(fileName) {
 }
 
 test("17〜20話の画像が静的サイトから取得できる", async () => {
-  for (const fileName of ["17.png", "18.PNG", "19.png", "20.PNG"]) {
+  for (const fileName of ["17.png", "18-comic.PNG", "19-comic.PNG", "20.PNG"]) {
     const response = await requestComic(fileName);
     assert.equal(response.status, 200, `${fileName} がHTTP ${response.status}`);
     assert.match(
@@ -86,7 +86,7 @@ test("17〜20話の画像が静的サイトから取得できる", async () => {
 });
 
 test("公開用docsも17〜20話を正しい大文字小文字で保持している", async () => {
-  for (const fileName of ["17.png", "18.PNG", "19.png", "20.PNG"]) {
+  for (const fileName of ["17.png", "18-comic.PNG", "19-comic.PNG", "20.PNG"]) {
     const filePath = path.join(docsDir, "comics", fileName);
     const body = await readFile(filePath);
     assert.ok(body.byteLength > 0, `docs/${fileName} が空です`);
@@ -107,7 +107,7 @@ test("public/comicsの全画像がout/comicsに存在し、取得できる", asy
 test("漫画URLにキャッシュ更新用バージョンが付いている", async () => {
   const html = await readFile(path.join(outDir, "index.html"), "utf8");
 
-  for (const fileName of ["17.png", "18.PNG", "19.png", "20.PNG"]) {
+  for (const fileName of ["17.png", "18-comic.PNG", "19-comic.PNG", "20.PNG"]) {
     assert.match(
       html,
       new RegExp(`comics/${fileName.replace(".", "\\.")}\\?v=[^\\s"\\\\]+`),
