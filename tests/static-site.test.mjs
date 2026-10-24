@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
 import { createServer } from "node:http";
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { after, before, test } from "node:test";
+import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -10,6 +12,7 @@ const outDir = path.join(projectRoot, "out");
 const docsDir = path.join(projectRoot, "docs");
 const publicComicsDir = path.join(projectRoot, "public", "comics");
 const basePath = "/roadsterMarin";
+const execFileAsync = promisify(execFile);
 
 let server;
 let serverUrl;
@@ -111,6 +114,20 @@ test("漫画ファイル名が数字.PNGに統一されている", async () => {
   assert.ok(
     fileNames.every((fileName) => /^\d+\.PNG$/.test(fileName)),
     `数字.PNG以外のファイルがあります: ${fileNames.join(", ")}`
+  );
+});
+
+test("Git管理下の漫画ファイル名も数字.PNGに統一されている", async () => {
+  const { stdout } = await execFileAsync("git", [
+    "ls-files",
+    "public/comics"
+  ], { cwd: projectRoot });
+  const fileNames = stdout.trim().split(/\r?\n/).filter(Boolean);
+
+  assert.ok(fileNames.length > 0, "Git管理下に漫画ファイルがありません");
+  assert.ok(
+    fileNames.every((filePath) => /^public\/comics\/\d+\.PNG$/.test(filePath)),
+    `Git管理下に数字.PNG以外のファイルがあります: ${fileNames.join(", ")}`
   );
 });
 
