@@ -27,7 +27,7 @@ before(async () => {
 
     // Simulate a transient network failure for the first request only.
     if (
-      fileName === "18.PNG" &&
+      fileName === "18.webp" &&
       requestUrl.searchParams.get("failure") === "1" &&
       !requestUrl.searchParams.has("retry") &&
       firstFailure
@@ -40,7 +40,7 @@ before(async () => {
 
     try {
       const body = await readFile(path.join(comicsDir, fileName));
-      response.writeHead(200, { "Content-Type": "image/png" });
+      response.writeHead(200, { "Content-Type": "image/webp" });
 
       for (let offset = 0; offset < body.length; offset += chunkSize) {
         response.write(body.subarray(offset, offset + chunkSize));
@@ -67,7 +67,7 @@ function imageUrl(fileName, query = "") {
 }
 
 test("低速配信でも17〜20話の画像を最後まで取得できる", async () => {
-  for (const fileName of ["17.PNG", "18.PNG", "19.PNG", "20.PNG"]) {
+  for (const fileName of ["17.webp", "18.webp", "19.webp", "20.webp"]) {
     const response = await fetch(imageUrl(fileName), {
       signal: AbortSignal.timeout(15000)
     });
@@ -78,13 +78,13 @@ test("低速配信でも17〜20話の画像を最後まで取得できる", asyn
 });
 
 test("一度失敗した画像はretryパラメータ付きURLで再取得できる", async () => {
-  const firstResponse = await fetch(imageUrl("18.PNG", "?failure=1"), {
+  const firstResponse = await fetch(imageUrl("18.webp", "?failure=1"), {
     signal: AbortSignal.timeout(15000)
   });
   assert.equal(firstResponse.status, 503);
 
   const retryUrl = imageUrl(
-    "18.PNG",
+    "18.webp",
     "?failure=1&retry=slow-network-test"
   );
   const retryResponse = await fetch(retryUrl, {

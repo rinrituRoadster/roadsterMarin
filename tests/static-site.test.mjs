@@ -21,7 +21,7 @@ const contentTypes = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8",
-  ".png": "image/png"
+  ".webp": "image/webp"
 };
 
 before(async () => {
@@ -73,7 +73,7 @@ async function requestComic(fileName) {
 }
 
 test("17〜20話の画像が静的サイトから取得できる", async () => {
-  for (const fileName of ["17.PNG", "18.PNG", "19.PNG", "20.PNG"]) {
+  for (const fileName of ["17.webp", "18.webp", "19.webp", "20.webp"]) {
     const response = await requestComic(fileName);
     assert.equal(response.status, 200, `${fileName} がHTTP ${response.status}`);
     assert.match(
@@ -86,7 +86,7 @@ test("17〜20話の画像が静的サイトから取得できる", async () => {
 });
 
 test("公開用docsも17〜20話を正しい大文字小文字で保持している", async () => {
-  for (const fileName of ["17.PNG", "18.PNG", "19.PNG", "20.PNG"]) {
+  for (const fileName of ["17.webp", "18.webp", "19.webp", "20.webp"]) {
     const filePath = path.join(docsDir, "comics", fileName);
     const body = await readFile(filePath);
     assert.ok(body.byteLength > 0, `docs/${fileName} が空です`);
@@ -95,7 +95,7 @@ test("公開用docsも17〜20話を正しい大文字小文字で保持してい
 
 test("public/comicsの全画像がout/comicsに存在し、取得できる", async () => {
   const fileNames = (await readdir(publicComicsDir)).filter((fileName) =>
-    /^\d+\.PNG$/.test(fileName)
+    /^\d+\.webp$/.test(fileName)
   );
 
   for (const fileName of fileNames) {
@@ -104,17 +104,17 @@ test("public/comicsの全画像がout/comicsに存在し、取得できる", asy
   }
 });
 
-test("漫画ファイル名が数字.PNGに統一されている", async () => {
+test("漫画ファイル名が数字.webpに統一されている", async () => {
   const fileNames = await readdir(publicComicsDir);
 
   assert.ok(fileNames.length > 0, "漫画ファイルがありません");
   assert.ok(
-    fileNames.every((fileName) => /^\d+\.PNG$/.test(fileName)),
-    `数字.PNG以外のファイルがあります: ${fileNames.join(", ")}`
+    fileNames.every((fileName) => /^\d+\.webp$/.test(fileName)),
+    `数字.webp以外のファイルがあります: ${fileNames.join(", ")}`
   );
 });
 
-test("Git管理下の漫画ファイル名も数字.PNGに統一されている", async () => {
+test("Git管理下の漫画ファイル名も数字.webpに統一されている", async () => {
   for (const directory of ["public/comics", "docs/comics"]) {
     const { stdout } = await execFileAsync("git", ["ls-files", directory], {
       cwd: projectRoot
@@ -124,9 +124,9 @@ test("Git管理下の漫画ファイル名も数字.PNGに統一されている"
     assert.ok(fileNames.length > 0, `Git管理下に${directory}の漫画がありません`);
     assert.ok(
       fileNames.every((filePath) =>
-        new RegExp(`^${directory.replace("/", "\\/")}\\/\\d+\\.PNG$`).test(filePath)
+        new RegExp(`^${directory.replace("/", "\\/")}\\/\\d+\\.webp$`).test(filePath)
       ),
-      `Git管理下の${directory}に数字.PNG以外のファイルがあります: ${fileNames.join(", ")}`
+      `Git管理下の${directory}に数字.webp以外のファイルがあります: ${fileNames.join(", ")}`
     );
   }
 });
@@ -134,7 +134,7 @@ test("Git管理下の漫画ファイル名も数字.PNGに統一されている"
 test("漫画URLにキャッシュ更新用バージョンが付いている", async () => {
   const html = await readFile(path.join(outDir, "index.html"), "utf8");
 
-  for (const fileName of ["17.PNG", "18.PNG", "19.PNG", "20.PNG"]) {
+  for (const fileName of ["17.webp", "18.webp", "19.webp", "20.webp"]) {
     assert.match(
       html,
       new RegExp(`comics/${fileName.replace(".", "\\.")}\\?v=[^\\s"\\\\]+`),

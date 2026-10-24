@@ -18,7 +18,7 @@ export function getComicEntries(): ComicEntry[] {
   const comicsDir = path.join(process.cwd(), "public", "comics");
 
   return readdirSync(comicsDir)
-    .filter((fileName) => /^\d+\.PNG$/.test(fileName))
+    .filter((fileName) => /^\d+\.webp$/.test(fileName))
     .map((fileName) => {
       const match = fileName.match(/^(\d+)/);
       const number = match ? Number(match[1]) : Number.MAX_SAFE_INTEGER;
