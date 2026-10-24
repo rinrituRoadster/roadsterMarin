@@ -21,10 +21,7 @@ const contentTypes = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8",
-  ".png": "image/png",
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".webp": "image/webp"
+  ".png": "image/png"
 };
 
 before(async () => {
@@ -98,7 +95,7 @@ test("公開用docsも17〜20話を正しい大文字小文字で保持してい
 
 test("public/comicsの全画像がout/comicsに存在し、取得できる", async () => {
   const fileNames = (await readdir(publicComicsDir)).filter((fileName) =>
-    /\.(png|jpg|jpeg|webp)$/i.test(fileName)
+    /^\d+\.PNG$/.test(fileName)
   );
 
   for (const fileName of fileNames) {
