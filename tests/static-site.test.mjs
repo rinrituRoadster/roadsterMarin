@@ -115,17 +115,20 @@ test("漫画ファイル名が数字.PNGに統一されている", async () => {
 });
 
 test("Git管理下の漫画ファイル名も数字.PNGに統一されている", async () => {
-  const { stdout } = await execFileAsync("git", [
-    "ls-files",
-    "public/comics"
-  ], { cwd: projectRoot });
-  const fileNames = stdout.trim().split(/\r?\n/).filter(Boolean);
+  for (const directory of ["public/comics", "docs/comics"]) {
+    const { stdout } = await execFileAsync("git", ["ls-files", directory], {
+      cwd: projectRoot
+    });
+    const fileNames = stdout.trim().split(/\r?\n/).filter(Boolean);
 
-  assert.ok(fileNames.length > 0, "Git管理下に漫画ファイルがありません");
-  assert.ok(
-    fileNames.every((filePath) => /^public\/comics\/\d+\.PNG$/.test(filePath)),
-    `Git管理下に数字.PNG以外のファイルがあります: ${fileNames.join(", ")}`
-  );
+    assert.ok(fileNames.length > 0, `Git管理下に${directory}の漫画がありません`);
+    assert.ok(
+      fileNames.every((filePath) =>
+        new RegExp(`^${directory.replace("/", "\\/")}\\/\\d+\\.PNG$`).test(filePath)
+      ),
+      `Git管理下の${directory}に数字.PNG以外のファイルがあります: ${fileNames.join(", ")}`
+    );
+  }
 });
 
 test("漫画URLにキャッシュ更新用バージョンが付いている", async () => {
