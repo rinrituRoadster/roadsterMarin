@@ -49,6 +49,8 @@ export function ComicGallery({
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasRestoredProgress, setHasRestoredProgress] = useState(false);
+  const [failedImage, setFailedImage] = useState<string | null>(null);
+  const [retryVersion, setRetryVersion] = useState(0);
   const [batchPhase, setBatchPhase] = useState<"idle" | "loading" | "success">("idle");
   const stripRef = useRef<HTMLDivElement | null>(null);
   const thumbRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -116,6 +118,13 @@ export function ComicGallery({
     return null;
   }
 
+  const currentItem = galleryItems[currentIndex];
+  const currentImageSrc =
+    retryVersion > 0
+      ? `${currentItem.src}${currentItem.src.includes("?") ? "&" : "?"}retry=${retryVersion}`
+      : currentItem.src;
+  const isCurrentImageFailed = failedImage === currentItem.src;
+
   const wait = (duration: number) =>
     new Promise<void>((resolve) => {
       window.setTimeout(resolve, duration);
@@ -132,14 +141,14 @@ export function ComicGallery({
     return Promise.all(
       targetItems.map(
         (item) =>
-          new Promise<void>((resolve) => {
+          new Promise<string | null>((resolve) => {
             const image = new window.Image();
-            image.onload = () => resolve();
-            image.onerror = () => resolve();
+            image.onload = () => resolve(null);
+            image.onerror = () => resolve(item.src);
             image.src = item.src;
           })
       )
-    );
+    ).then((failedSources) => failedSources.find(Boolean) ?? null);
   };
 
   const goToIndex = async (nextIndex: number) => {
@@ -162,7 +171,19 @@ export function ComicGallery({
     isTransitioning.current = true;
     setBatchPhase("loading");
 
-    await Promise.all([preloadBatch(nextIndex), wait(BATCH_LOADING_MS)]);
+    const [failedSource] = await Promise.all([
+      preloadBatch(nextIndex),
+      wait(BATCH_LOADING_MS)
+    ]);
+
+    if (failedSource) {
+      setCurrentIndex(nextIndex);
+      setFailedImage(failedSource);
+      setBatchPhase("idle");
+      isTransitioning.current = false;
+      return;
+    }
+
     setBatchPhase("success");
     await wait(BATCH_SUCCESS_MS);
     setCurrentIndex(nextIndex);
@@ -193,27 +214,50 @@ export function ComicGallery({
       ) : null}
 
       <div className="-mx-4 overflow-hidden rounded-[12px] border border-white/10 bg-white/5 p-[2px] shadow-float backdrop-blur-md sm:mx-0 sm:rounded-[28px] sm:p-2">
-        <button
-          type="button"
-          onClick={(event) => {
-            const rect = event.currentTarget.getBoundingClientRect();
-            const clickX = event.clientX - rect.left;
+        {isCurrentImageFailed ? (
+          <div className="flex aspect-[2/3] w-full items-center justify-center rounded-[8px] bg-white/5 px-6 text-center sm:rounded-[24px]">
+            <div>
+              <p className="text-sm tracking-[0.12em] text-white/70">
+                画像を読み込めませんでした。
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setRetryVersion(Date.now());
+                  setFailedImage(null);
+                }}
+                className="mt-5 rounded-full border border-mist/60 px-6 py-3 text-xs tracking-[0.2em] text-mist transition hover:bg-white/10"
+              >
+                リロード！
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={(event) => {
+              const rect = event.currentTarget.getBoundingClientRect();
+              const clickX = event.clientX - rect.left;
 
-            if (clickX >= rect.width / 2) {
-              void goToIndex(Math.min(currentIndex + 1, galleryItems.length - 1));
-              return;
-            }
+              if (clickX >= rect.width / 2) {
+                void goToIndex(Math.min(currentIndex + 1, galleryItems.length - 1));
+                return;
+              }
 
-            void goToIndex(Math.max(currentIndex - 1, 0));
-          }}
-          className="block w-full overflow-hidden rounded-[8px] text-left sm:rounded-[24px]"
-        >
-          <img
-            src={galleryItems[currentIndex].src}
-            alt={galleryItems[currentIndex].alt}
-            className="block w-full rounded-[8px] object-cover sm:rounded-[24px]"
-          />
-        </button>
+              void goToIndex(Math.max(currentIndex - 1, 0));
+            }}
+            className="block w-full overflow-hidden rounded-[8px] text-left sm:rounded-[24px]"
+          >
+            <img
+              key={`${currentItem.src}-${retryVersion}`}
+              src={currentImageSrc}
+              alt={currentItem.alt}
+              onLoad={() => setFailedImage(null)}
+              onError={() => setFailedImage(currentItem.src)}
+              className="block w-full rounded-[8px] object-cover sm:rounded-[24px]"
+            />
+          </button>
+        )}
       </div>
 
       {galleryItems[currentIndex].kind === "last" ? (
