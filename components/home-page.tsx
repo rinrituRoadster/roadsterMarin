@@ -140,6 +140,8 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
               items={comics}
               lastImageSrc={withBasePath("/images/last.PNG")}
               xUrl={X_URL}
+              loadingImageSrc={withBasePath("/images/loading.jpg")}
+              successImageSrc={withBasePath("/images/success.jpg")}
             />
           </RevealSection>
         </section>

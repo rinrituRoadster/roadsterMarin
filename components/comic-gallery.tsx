@@ -7,6 +7,8 @@ type ComicGalleryProps = {
   items: ComicEntry[];
   lastImageSrc: string;
   xUrl: string;
+  loadingImageSrc: string;
+  successImageSrc: string;
 };
 
 type GalleryItem = {
@@ -18,11 +20,15 @@ type GalleryItem = {
 
 const ITEMS_PER_PAGE = 5;
 const READ_PROGRESS_KEY = "marin-last-read";
+const BATCH_LOADING_MS = 900;
+const BATCH_SUCCESS_MS = 700;
 
 export function ComicGallery({
   items,
   lastImageSrc,
-  xUrl
+  xUrl,
+  loadingImageSrc,
+  successImageSrc
 }: ComicGalleryProps) {
   const galleryItems = useMemo<GalleryItem[]>(
     () => [
@@ -43,8 +49,10 @@ export function ComicGallery({
   );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasRestoredProgress, setHasRestoredProgress] = useState(false);
+  const [batchPhase, setBatchPhase] = useState<"idle" | "loading" | "success">("idle");
   const stripRef = useRef<HTMLDivElement | null>(null);
   const thumbRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const isTransitioning = useRef(false);
 
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === galleryItems.length - 1;
@@ -108,16 +116,82 @@ export function ComicGallery({
     return null;
   }
 
+  const wait = (duration: number) =>
+    new Promise<void>((resolve) => {
+      window.setTimeout(resolve, duration);
+    });
+
+  const preloadBatch = (targetIndex: number) => {
+    const targetStart =
+      Math.floor(targetIndex / ITEMS_PER_PAGE) * ITEMS_PER_PAGE;
+    const targetItems = galleryItems.slice(
+      targetStart,
+      targetStart + ITEMS_PER_PAGE
+    );
+
+    return Promise.all(
+      targetItems.map(
+        (item) =>
+          new Promise<void>((resolve) => {
+            const image = new window.Image();
+            image.onload = () => resolve();
+            image.onerror = () => resolve();
+            image.src = item.src;
+          })
+      )
+    );
+  };
+
+  const goToIndex = async (nextIndex: number) => {
+    if (
+      nextIndex < 0 ||
+      nextIndex >= galleryItems.length ||
+      isTransitioning.current
+    ) {
+      return;
+    }
+
+    const currentPage = Math.floor(currentIndex / ITEMS_PER_PAGE);
+    const nextPage = Math.floor(nextIndex / ITEMS_PER_PAGE);
+
+    if (currentPage === nextPage) {
+      setCurrentIndex(nextIndex);
+      return;
+    }
+
+    isTransitioning.current = true;
+    setBatchPhase("loading");
+
+    await Promise.all([preloadBatch(nextIndex), wait(BATCH_LOADING_MS)]);
+    setBatchPhase("success");
+    await wait(BATCH_SUCCESS_MS);
+    setCurrentIndex(nextIndex);
+    setBatchPhase("idle");
+    isTransitioning.current = false;
+  };
+
   const showPrevious = () => {
-    setCurrentIndex((current) => Math.max(current - 1, 0));
+    void goToIndex(Math.max(currentIndex - 1, 0));
   };
 
   const showNext = () => {
-    setCurrentIndex((current) => Math.min(current + 1, galleryItems.length - 1));
+    void goToIndex(Math.min(currentIndex + 1, galleryItems.length - 1));
   };
 
   return (
     <div className="space-y-5">
+      {batchPhase !== "idle" ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy/90 px-6">
+          <img
+            src={batchPhase === "loading" ? loadingImageSrc : successImageSrc}
+            alt={batchPhase === "loading" ? "Loading next comics" : "Comics loaded"}
+            className={`w-[190px] max-w-[48vw] object-contain sm:w-[230px] ${
+              batchPhase === "success" ? "animate-pulseSoft" : "animate-reveal"
+            }`}
+          />
+        </div>
+      ) : null}
+
       <div className="-mx-4 overflow-hidden rounded-[12px] border border-white/10 bg-white/5 p-[2px] shadow-float backdrop-blur-md sm:mx-0 sm:rounded-[28px] sm:p-2">
         <button
           type="button"
@@ -126,11 +200,11 @@ export function ComicGallery({
             const clickX = event.clientX - rect.left;
 
             if (clickX >= rect.width / 2) {
-              showNext();
+              void goToIndex(Math.min(currentIndex + 1, galleryItems.length - 1));
               return;
             }
 
-            showPrevious();
+            void goToIndex(Math.max(currentIndex - 1, 0));
           }}
           className="block w-full overflow-hidden rounded-[8px] text-left sm:rounded-[24px]"
         >
