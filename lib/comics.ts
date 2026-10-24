@@ -1,4 +1,5 @@
 import { readdirSync } from "fs";
+import { statSync } from "fs";
 import path from "path";
 
 export type ComicEntry = {
@@ -21,13 +22,21 @@ export function getComicEntries(): ComicEntry[] {
     .map((fileName) => {
       const match = fileName.match(/^(\d+)/);
       const number = match ? Number(match[1]) : Number.MAX_SAFE_INTEGER;
+      const filePath = path.join(comicsDir, fileName);
+      const fileStats = statSync(filePath);
+      const version = `${fileStats.size}-${Math.trunc(fileStats.mtimeMs)}`;
 
       return {
         id: `comic-${fileName.toLowerCase()}`,
-        src: withBasePath(`/comics/${fileName}`),
+        src: withBasePath(`/comics/${fileName}?v=${version}`),
         alt: `Comic ${String(number).padStart(2, "0")}`,
-        number
+        number,
+        fileName
       };
     })
-    .sort((left, right) => left.number - right.number);
+    .sort(
+      (left, right) =>
+        left.number - right.number || left.fileName.localeCompare(right.fileName)
+    )
+    .map(({ fileName: _fileName, ...comic }) => comic);
 }
