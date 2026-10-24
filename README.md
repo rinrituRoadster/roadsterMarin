@@ -15,18 +15,18 @@ npm run dev
 npm run build
 ```
 
-`out/` に公開用ファイルが生成されます。
+`out/` に静的ファイルが生成されます。
 
 ## GitHub Pages 配信
 
-リポジトリ名配下で公開する場合は、ビルド時に `NEXT_PUBLIC_BASE_PATH` を付けてください。
+このリポジトリをGitHub Pagesで公開する場合は、公開用スクリプトを使ってください。
+
+```bash
+npm run build:pages
+```
+
+手動でリポジトリ名を変更する場合は、次の形式です。
 
 ```bash
 NEXT_PUBLIC_BASE_PATH=/your-repository-name npm run build
-```
-
-例:
-
-```bash
-NEXT_PUBLIC_BASE_PATH=/marin-site npm run build
 ```

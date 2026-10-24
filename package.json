@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "test": "npm run build && node --test tests/*.test.mjs",
+    "build:pages": "NEXT_PUBLIC_BASE_PATH=/roadsterMarin next build",
+    "test": "npm run build:pages && node --test tests/*.test.mjs",
     "start": "next start",
     "lint": "next lint"
   },
