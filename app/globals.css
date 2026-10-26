@@ -23,6 +23,51 @@ body::selection {
   background: rgba(211, 236, 255, 0.28);
 }
 
+.comic-progress {
+  appearance: none;
+  height: 1.25rem;
+  cursor: pointer;
+  background: transparent;
+}
+
+.comic-progress::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    rgba(223, 244, 255, 0.9) 0%,
+    rgba(223, 244, 255, 0.9) var(--progress, 0%),
+    rgba(255, 255, 255, 0.2) var(--progress, 0%),
+    rgba(255, 255, 255, 0.2) 100%
+  );
+}
+
+.comic-progress::-moz-range-track {
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.comic-progress::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -6px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  background: #dff4ff;
+  box-shadow: 0 0 18px rgba(137, 207, 255, 0.55);
+}
+
+.comic-progress::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  background: #dff4ff;
+  box-shadow: 0 0 18px rgba(137, 207, 255, 0.55);
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import type { ComicEntry } from "@/lib/comics";
 
 type ComicGalleryProps = {
@@ -52,19 +53,10 @@ export function ComicGallery({
   const [failedImage, setFailedImage] = useState<string | null>(null);
   const [retryVersion, setRetryVersion] = useState(0);
   const [batchPhase, setBatchPhase] = useState<"idle" | "loading" | "success">("idle");
-  const stripRef = useRef<HTMLDivElement | null>(null);
-  const thumbRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const isTransitioning = useRef(false);
 
   const isFirst = currentIndex === 0;
   const isLast = currentIndex === galleryItems.length - 1;
-  const pageStart =
-    Math.floor(currentIndex / ITEMS_PER_PAGE) * ITEMS_PER_PAGE;
-  const visibleItems = galleryItems.slice(
-    pageStart,
-    pageStart + ITEMS_PER_PAGE
-  );
-
   useEffect(() => {
     try {
       const savedIndex = Number.parseInt(
@@ -95,24 +87,6 @@ export function ComicGallery({
       // Ignore storage restrictions without interrupting comic navigation.
     }
   }, [currentIndex, hasRestoredProgress]);
-
-  useEffect(() => {
-    const activeThumb = thumbRefs.current[currentIndex];
-    const strip = stripRef.current;
-
-    if (!activeThumb || !strip) {
-      return;
-    }
-
-    const thumbLeft = activeThumb.offsetLeft;
-    const thumbWidth = activeThumb.offsetWidth;
-    const targetLeft = thumbLeft - strip.clientWidth / 2 + thumbWidth / 2;
-
-    strip.scrollTo({
-      left: Math.max(targetLeft, 0),
-      behavior: "smooth"
-    });
-  }, [currentIndex]);
 
   if (galleryItems.length === 0) {
     return null;
@@ -298,39 +272,31 @@ export function ComicGallery({
         </button>
       </div>
 
-      <div
-        ref={stripRef}
-        className="flex gap-2 overflow-x-auto pb-2 [scrollbar-color:rgba(223,244,255,0.45)_transparent] [scrollbar-width:thin] sm:gap-3"
-      >
-        {visibleItems.map((item, visibleIndex) => {
-          const index = pageStart + visibleIndex;
-
-          return (
-            <button
-              key={item.id}
-              ref={(node) => {
-                thumbRefs.current[index] = node;
-              }}
-              type="button"
-              onClick={() => setCurrentIndex(index)}
-              className={`relative shrink-0 overflow-hidden rounded-[14px] border transition sm:rounded-[18px] ${
-                currentIndex === index
-                  ? "border-mist/70 bg-white/10"
-                  : "border-white/10 bg-white/5 hover:border-white/30"
-              }`}
-            >
-              <img
-                src={item.src}
-                alt={item.alt}
-                loading="lazy"
-                className="h-20 w-[4.5rem] object-cover sm:h-28 sm:w-24"
-              />
-              <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#040b19] to-transparent px-2 py-2 text-left text-[10px] tracking-[0.24em] text-white/80">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-            </button>
-          );
-        })}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between text-[10px] tracking-[0.2em] text-white/45">
+          <span>1話</span>
+          <span>最終</span>
+        </div>
+        <input
+          aria-label="漫画の話数を選択"
+          aria-valuetext={`${currentIndex + 1} / ${galleryItems.length}`}
+          className="comic-progress w-full"
+          max={galleryItems.length - 1}
+          min="0"
+          onChange={(event) => {
+            setCurrentIndex(Number(event.target.value));
+            setFailedImage(null);
+            setRetryVersion(0);
+          }}
+          step="1"
+          style={
+            {
+              "--progress": `${(currentIndex / Math.max(galleryItems.length - 1, 1)) * 100}%`
+            } as CSSProperties
+          }
+          type="range"
+          value={currentIndex}
+        />
       </div>
     </div>
   );
