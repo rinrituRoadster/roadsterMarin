@@ -142,3 +142,31 @@ test("漫画URLにキャッシュ更新用バージョンが付いている", as
     );
   }
 });
+
+test("検索エンジン向けのrobots.txtとsitemap.xmlが生成されている", async () => {
+  const robots = await readFile(path.join(outDir, "robots.txt"), "utf8");
+  const sitemap = await readFile(path.join(outDir, "sitemap.xml"), "utf8");
+
+  assert.match(robots, /User-agent: \*/);
+  assert.match(
+    robots,
+    /Sitemap: https:\/\/rinrituroadster\.github\.io\/roadsterMarin\/sitemap\.xml/
+  );
+  assert.match(
+    sitemap,
+    /<loc>https:\/\/rinrituroadster\.github\.io\/roadsterMarin\/<\/loc>/
+  );
+});
+
+test("検索向けmetadataと構造化データがHTMLに含まれている", async () => {
+  const html = await readFile(path.join(outDir, "index.html"), "utf8");
+
+  assert.match(
+    html,
+    /<link rel="canonical" href="https:\/\/rinrituroadster\.github\.io\/roadsterMarin\/"/i
+  );
+  assert.match(html, /property="og:title"/i);
+  assert.match(html, /property="og:image"/i);
+  assert.match(html, /application\/ld\+json/);
+  assert.match(html, /中古車呪縛霊まりんちゃん/);
+});
