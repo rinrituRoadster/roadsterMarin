@@ -202,7 +202,10 @@ export function ComicGallery({
   return (
     <div className="space-y-5">
       {batchPhase !== "idle" ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy/90 px-6">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center bg-navy/90 px-6"
+        >
           <img
             src={batchPhase === "loading" ? loadingImageSrc : successImageSrc}
             alt={batchPhase === "loading" ? "Loading next comics" : "Comics loaded"}

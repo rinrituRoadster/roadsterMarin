@@ -73,7 +73,10 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
       <BackgroundLayer />
 
       {overlay ? (
-        <section className="fixed inset-0 z-40 flex items-center justify-center bg-navy/28 px-6">
+        <section
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 z-40 flex items-center justify-center bg-navy/28 px-6"
+        >
           <img
             src={overlay.src}
             alt={overlay.alt}
@@ -169,7 +172,7 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
 
 function BackgroundLayer() {
   return (
-    <div className="fixed inset-0">
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0">
       <div className="absolute inset-0 overflow-hidden">
         <img
           src={withBasePath("/images/background_collage.PNG")}
