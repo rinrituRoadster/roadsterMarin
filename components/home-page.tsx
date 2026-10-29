@@ -19,6 +19,7 @@ type HomePageProps = {
 export function HomePage({ comics, heroImages }: HomePageProps) {
   const [phase, setPhase] = useState<Phase>("loading");
   const [heroImage, setHeroImage] = useState(heroImages[0] ?? "");
+  const [characterSet, setCharacterSet] = useState(1);
 
   useEffect(() => {
     const loadingTimer = window.setTimeout(() => {
@@ -43,6 +44,10 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
     const randomIndex = Math.floor(Math.random() * heroImages.length);
     setHeroImage(heroImages[randomIndex]);
   }, [heroImages]);
+
+  useEffect(() => {
+    setCharacterSet(Math.floor(Math.random() * 3) + 1);
+  }, []);
 
   const overlay = useMemo(() => {
     if (phase === "loading") {
@@ -131,20 +136,20 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
             </div>
           </RevealSection>
 
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3 sm:gap-6">
             <CharacterCard
               name="海夢"
               romanized="MARIN / 155cm"
               intro="中古のオープンカーに憑いてきた呪縛霊の女の子。好きな音楽はシティポップ。"
               concern="ご主人がお供え物をしてくれない。"
-              images={["/images/profile/1-marin.jpg", "/images/profile/2-marin.jpg", "/images/profile/3-marin.jpg"]}
+              image={`/images/profile/${characterSet}-marin.webp`}
             />
             <CharacterCard
               name="ご主人"
               romanized="GOSHUJIN / 178cm"
               intro="中古のロードスターを購入した社会人。趣味なし、恋人なし。平凡な日常を送っていた。"
               concern="中古車に幽霊がついてきた。"
-              images={["/images/profile/1-owner.jpg", "/images/profile/2-owner.jpg", "/images/profile/3-owner.jpg"]}
+              image={`/images/profile/${characterSet}-owner.webp`}
             />
           </div>
         </section>
@@ -189,15 +194,16 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
               </p>
               <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
                 {[1, 2, 3, 4].map((number) => (
-                  <img
-                    key={number}
-                    src={withBasePath(`/images/line-stamp/${number}.PNG`)}
-                    alt={`海夢ちゃんLINEスタンプ${number}`}
-                    width="512"
-                    height="512"
-                    loading="lazy"
-                    className="aspect-square w-full rounded-[10px] object-contain"
-                  />
+                  <div key={number} className="aspect-square rounded-[10px] bg-white/[0.04] p-2">
+                    <img
+                      src={withBasePath(`/images/line-stamp/${number}.webp`)}
+                      alt={`海夢ちゃんLINEスタンプ${number}`}
+                      width="512"
+                      height="512"
+                      loading="lazy"
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
                 ))}
               </div>
               <a
@@ -246,38 +252,25 @@ type CharacterCardProps = {
   romanized: string;
   intro: string;
   concern: string;
-  images: string[];
+  image: string;
 };
 
-function CharacterCard({ name, romanized, intro, concern, images }: CharacterCardProps) {
+function CharacterCard({ name, romanized, intro, concern, image }: CharacterCardProps) {
   return (
-    <article className="rounded-[18px] border border-white/12 bg-white/[0.04] p-4 sm:p-5">
-      <div className="grid grid-cols-2 gap-2">
-        <img
-          src={withBasePath(images[0])}
-          alt={`${name}プロフィール`}
-          width="800"
-          height="800"
-          loading="lazy"
-          className="row-span-2 aspect-square h-full w-full rounded-[10px] object-cover"
-        />
-        {images.slice(1).map((image, index) => (
-          <img
-            key={image}
-            src={withBasePath(image)}
-            alt={`${name}プロフィール${index + 2}`}
-            width="800"
-            height="800"
-            loading="lazy"
-            className="aspect-square w-full rounded-[10px] object-cover"
-          />
-        ))}
-      </div>
-      <div className="mt-5">
+    <article className="rounded-[14px] border border-white/12 bg-white/[0.04] p-2.5 sm:rounded-[18px] sm:p-5">
+      <img
+        src={withBasePath(image)}
+        alt={`${name}プロフィール`}
+        width="800"
+        height="800"
+        loading="lazy"
+        className="aspect-square w-full rounded-[8px] object-cover sm:rounded-[10px]"
+      />
+      <div className="mt-3 sm:mt-5">
         <p className="text-[10px] uppercase tracking-[0.3em] text-dusk/70">{romanized}</p>
-        <h3 className="mt-2 text-xl font-medium text-white">{name}</h3>
-        <p className="mt-4 text-[0.8rem] leading-[2.15] text-white/70">{intro}</p>
-        <p className="mt-3 border-l border-[#89cfff]/60 pl-3 text-[0.75rem] leading-[2] text-white/55">
+        <h3 className="mt-1 text-base font-medium text-white sm:mt-2 sm:text-xl">{name}</h3>
+        <p className="mt-2 text-[0.68rem] leading-[1.9] text-white/70 sm:mt-4 sm:text-[0.8rem] sm:leading-[2.15]">{intro}</p>
+        <p className="mt-2 border-l border-[#89cfff]/60 pl-2 text-[0.64rem] leading-[1.8] text-white/55 sm:mt-3 sm:pl-3 sm:text-[0.75rem] sm:leading-[2]">
           {concern}
         </p>
       </div>

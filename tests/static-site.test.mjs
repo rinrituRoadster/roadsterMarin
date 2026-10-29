@@ -200,10 +200,10 @@ test("プロフィールとLINEスタンプの導線がトップページに含�
   const html = await readFile(path.join(outDir, "index.html"), "utf8");
 
   for (const asset of [
-    "images/profile/1-marin.jpg",
-    "images/profile/1-owner.jpg",
-    "images/line-stamp/1.PNG",
-    "images/line-stamp/4.PNG"
+    "images/profile/1-marin.webp",
+    "images/profile/1-owner.webp",
+    "images/line-stamp/1.webp",
+    "images/line-stamp/4.webp"
   ]) {
     assert.match(html, new RegExp(asset.replace(/[.]/g, "\\.")), `${asset} が見つかりません`);
   }
