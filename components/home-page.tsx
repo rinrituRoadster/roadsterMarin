@@ -52,7 +52,7 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
   const overlay = useMemo(() => {
     if (phase === "loading") {
       return {
-        src: withBasePath("/images/loading.jpg"),
+        src: withBasePath("/images/loading.webp"),
         alt: "Loading",
         className: "opacity-100 scale-100"
       };
@@ -60,7 +60,7 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
 
     if (phase === "success") {
       return {
-        src: withBasePath("/images/success.jpg"),
+        src: withBasePath("/images/success.webp"),
         alt: "Success",
         className: "animate-pulseSoft"
       };
@@ -102,17 +102,17 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
           <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-[#050914] to-transparent" />
 
           <div className="relative mx-auto flex h-full w-full max-w-6xl items-start px-5 pt-14 sm:px-8 sm:pt-20 lg:px-14 lg:pt-28">
-            <RevealSection className="max-w-[440px]">
-              <div className="rounded-[24px] border border-white/12 bg-[rgba(10,15,35,0.18)] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.14)] sm:border-white/15 sm:bg-[rgba(10,15,35,0.32)] sm:p-7 sm:backdrop-blur-[18px]">
+            <RevealSection className="max-w-[440px] lg:max-w-[620px]">
+              <div className="rounded-[24px] border border-white/12 bg-[rgba(10,15,35,0.18)] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.14)] sm:border-white/15 sm:bg-[rgba(10,15,35,0.32)] sm:p-7 sm:backdrop-blur-[18px] lg:rounded-[30px] lg:border-white/20 lg:bg-[rgba(10,15,35,0.22)] lg:p-10 lg:backdrop-blur-[22px]">
                 <p className="mb-5 text-[10px] uppercase tracking-[0.38em] text-mist/75">
                   Neo Nostalgia / City Pop / Heisei x Reiwa
                 </p>
-                <h1 className="text-balance text-left text-[1rem] font-medium leading-[2.1] text-white sm:text-[1.75rem]">
+                <h1 className="text-balance text-left text-[1rem] font-medium leading-[2.1] text-white sm:text-[1.75rem] lg:text-[2.8rem] lg:leading-[1.75]">
                   中古のロードスターには
                   <br />
                   幽霊少女が憑いていました。
                 </h1>
-                <p className="mt-7 max-w-[26rem] text-left text-[0.8rem] leading-[2.35] text-white/74">
+                <p className="mt-7 max-w-[26rem] text-left text-[0.8rem] leading-[2.35] text-white/74 lg:mt-9 lg:max-w-[34rem] lg:text-[1.05rem] lg:leading-[2.2] lg:text-white/80">
                   海沿いを走るときのような、少しだけ胸が鳴る
                   <br />
                   ノスタルジック・ロードコメディ。
@@ -169,10 +169,10 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
           <RevealSection delayMs={120}>
             <ComicGallery
               items={comics}
-              lastImageSrc={withBasePath("/images/last.PNG")}
+              lastImageSrc={withBasePath("/images/last.webp")}
               xUrl={X_URL}
-              loadingImageSrc={withBasePath("/images/loading.jpg")}
-              successImageSrc={withBasePath("/images/success.jpg")}
+              loadingImageSrc={withBasePath("/images/loading.webp")}
+              successImageSrc={withBasePath("/images/success.webp")}
             />
           </RevealSection>
         </section>
@@ -280,7 +280,7 @@ function BackgroundLayer() {
     <div aria-hidden="true" className="pointer-events-none fixed inset-0">
       <div className="absolute inset-0 overflow-hidden">
         <img
-          src={withBasePath("/images/background_collage.PNG")}
+          src={withBasePath("/images/background_collage.webp")}
           alt=""
           aria-hidden="true"
           className="h-full w-full animate-drift object-cover blur-[5px] saturate-[1.05]"

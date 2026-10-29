@@ -11,6 +11,7 @@ const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "
 const outDir = path.join(projectRoot, "out");
 const docsDir = path.join(projectRoot, "docs");
 const publicComicsDir = path.join(projectRoot, "public", "comics");
+const publicImagesDir = path.join(projectRoot, "public", "images");
 const basePath = "/roadsterMarin";
 const execFileAsync = promisify(execFile);
 
@@ -141,6 +142,19 @@ test("漫画URLにキャッシュ更新用バージョンが付いている", as
       `${fileName} にバージョン情報がありません`
     );
   }
+});
+
+test("public/images直下の画像がWebPに統一されている", async () => {
+  const fileNames = await readdir(publicImagesDir);
+  const directImageNames = fileNames.filter((fileName) => fileName.endsWith(".webp"));
+
+  assert.ok(directImageNames.length > 0, "public/images直下に画像がありません");
+  assert.ok(
+    fileNames.every(
+      (fileName) => fileName === "profile" || fileName === "line-stamp" || fileName.endsWith(".webp")
+    ),
+    `WebP以外の画像があります: ${fileNames.join(", ")}`
+  );
 });
 
 test("検索エンジン向けのrobots.txtとsitemap.xmlが生成されている", async () => {

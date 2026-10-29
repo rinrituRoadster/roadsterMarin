@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     locale: "ja_JP",
     images: [
       {
-        url: `${SITE_URL}/images/hero1.png`,
+        url: `${SITE_URL}/images/hero1.webp`,
         alt: "中古車呪縛霊まりんちゃんのキービジュアル"
       }
     ]
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     description:
       "4コマ漫画・無料漫画・無料まんがとして楽しめる、中古車呪縛霊まりんちゃんの公式サイト。",
     creator: "@roadsterMarin",
-    images: [`${SITE_URL}/images/hero1.png`]
+    images: [`${SITE_URL}/images/hero1.webp`]
   }
 };
 
