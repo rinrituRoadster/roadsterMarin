@@ -1,12 +1,13 @@
 import { HomePage } from "@/components/home-page";
 import { getComicEntries } from "@/lib/comics";
 import { getHeroImages } from "@/lib/hero-images";
+import { SITE_URL } from "@/lib/site";
 
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "ComicSeries",
   name: "中古車呪縛霊まりんちゃん",
-  url: "https://rinrituroadster.github.io/roadsterMarin/",
+  url: `${SITE_URL}/`,
   description:
     "中古車と海沿いの夜風をテーマにした、無料で読めるノスタルジックロードコメディ4コマ漫画。",
   inLanguage: "ja",

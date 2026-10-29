@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SITE_URL } from "@/lib/site";
 
-const SITE_URL = "https://rinrituroadster.github.io/roadsterMarin/";
+const SITE_URL_WITH_SLASH = `${SITE_URL}/`;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(SITE_URL_WITH_SLASH),
   title: "中古車呪縛霊まりんちゃん",
   description:
     "中古車呪縛霊まりんちゃんの4コマ漫画・無料漫画・無料まんがを読める公式紹介サイト。海沿いの夜風とシティポップの余韻で楽しむノスタルジックロードコメディ。",
@@ -29,11 +30,11 @@ export const metadata: Metadata = {
     follow: true
   },
   alternates: {
-    canonical: SITE_URL
+    canonical: SITE_URL_WITH_SLASH
   },
   openGraph: {
     type: "website",
-    url: SITE_URL,
+    url: SITE_URL_WITH_SLASH,
     title: "中古車呪縛霊まりんちゃん",
     description:
       "4コマ漫画・無料漫画・無料まんがとして楽しめる、中古車呪縛霊まりんちゃんの公式サイト。",
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
     locale: "ja_JP",
     images: [
       {
-        url: `${SITE_URL}images/hero1.png`,
+        url: `${SITE_URL}/images/hero1.png`,
         alt: "中古車呪縛霊まりんちゃんのキービジュアル"
       }
     ]
@@ -52,7 +53,7 @@ export const metadata: Metadata = {
     description:
       "4コマ漫画・無料漫画・無料まんがとして楽しめる、中古車呪縛霊まりんちゃんの公式サイト。",
     creator: "@roadsterMarin",
-    images: [`${SITE_URL}images/hero1.png`]
+    images: [`${SITE_URL}/images/hero1.png`]
   }
 };
 

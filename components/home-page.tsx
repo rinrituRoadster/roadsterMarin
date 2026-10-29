@@ -4,14 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import { ComicGallery } from "@/components/comic-gallery";
 import { RevealSection } from "@/components/reveal-section";
 import type { ComicEntry } from "@/lib/comics";
+import { LINE_STAMP_URL, withBasePath, X_URL } from "@/lib/site";
 
 const LOADING_MS = 1500;
 const SUCCESS_MS = 1000;
-const X_URL = "https://x.com/roadsterMarin";
-const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
-
-const withBasePath = (path: string) =>
-  `${BASE_PATH}${path.startsWith("/") ? path : `/${path}`}`;
 
 type Phase = "loading" | "success" | "index";
 
@@ -112,12 +108,44 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
                   幽霊少女が憑いていました。
                 </h1>
                 <p className="mt-7 max-w-[26rem] text-left text-[0.8rem] leading-[2.35] text-white/74">
-                  海沿いを走るときみたいな少しだけ胸が鳴るノスタルジックロードコメディ
+                  海沿いを走るときのような、少しだけ胸が鳴る
                   <br />
-                  あの頃の海風を令和のふたりが届けます
+                  ノスタルジック・ロードコメディ。
+                  <br />
+                  あの頃の海風を、令和のふたりが届けます。
                 </p>
               </div>
             </RevealSection>
+          </div>
+        </section>
+
+        <section className="mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8 lg:px-14">
+          <RevealSection>
+            <div className="mb-8 max-w-[34rem] text-left">
+              <p className="text-[10px] uppercase tracking-[0.32em] text-dusk/70">
+                Characters
+              </p>
+              <h2 className="mt-3 text-[1rem] font-medium leading-[2.1] text-white">
+                海夢と、ご主人。
+              </h2>
+            </div>
+          </RevealSection>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <CharacterCard
+              name="海夢"
+              romanized="MARIN / 155cm"
+              intro="中古のオープンカーに憑いてきた呪縛霊の女の子。好きな音楽はシティポップ。"
+              concern="ご主人がお供え物をしてくれない。"
+              images={["/images/profile/1-marin.jpg", "/images/profile/2-marin.jpg", "/images/profile/3-marin.jpg"]}
+            />
+            <CharacterCard
+              name="ご主人"
+              romanized="GOSHUJIN / 178cm"
+              intro="中古のロードスターを購入した社会人。趣味なし、恋人なし。平凡な日常を送っていた。"
+              concern="中古車に幽霊がついてきた。"
+              images={["/images/profile/1-owner.jpg", "/images/profile/2-owner.jpg", "/images/profile/3-owner.jpg"]}
+            />
           </div>
         </section>
 
@@ -147,16 +175,61 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
           </RevealSection>
         </section>
 
+        <section className="mx-auto w-full max-w-6xl px-5 pb-20 sm:px-8 lg:px-14">
+          <RevealSection>
+            <div className="rounded-[18px] border border-white/12 bg-white/[0.04] p-5 sm:p-8">
+              <p className="text-[10px] uppercase tracking-[0.32em] text-dusk/70">Line stickers</p>
+              <h2 className="mt-3 text-[1rem] font-medium leading-[2.1] text-white">
+                海夢ちゃん、LINEスタンプになりました。
+              </h2>
+              <p className="mt-4 text-[0.8rem] leading-[2.2] text-white/65">
+                ちょっと生意気で、ちょっと便利。
+                <br />
+                ドライブにも日常会話にも使える、海夢ちゃんのLINEスタンプ。
+              </p>
+              <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+                {[1, 2, 3, 4].map((number) => (
+                  <img
+                    key={number}
+                    src={withBasePath(`/images/line-stamp/${number}.PNG`)}
+                    alt={`海夢ちゃんLINEスタンプ${number}`}
+                    width="512"
+                    height="512"
+                    loading="lazy"
+                    className="aspect-square w-full rounded-[10px] object-contain"
+                  />
+                ))}
+              </div>
+              <a
+                href={LINE_STAMP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex rounded-full border border-white/35 px-5 py-3 text-xs tracking-[0.14em] text-white/75 transition hover:border-[#89cfff] hover:bg-[#89cfff]/10 hover:text-white"
+              >
+                LINEスタンプを見る
+              </a>
+            </div>
+          </RevealSection>
+        </section>
+
         <RevealSection className="mx-auto w-full max-w-6xl px-5 pb-16 sm:px-8 lg:px-14" delayMs={160}>
           <div className="flex flex-col items-center gap-6">
+            <div className="text-center">
+              <h2 className="text-[1rem] font-medium leading-[2.1] text-white">
+                Xで海夢たちの日常をチェック
+              </h2>
+              <p className="mt-2 text-[0.75rem] leading-[2] text-white/60">
+                最新話や制作情報、ロードスターとの日常を更新中。
+              </p>
+            </div>
             <a
               href={X_URL}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               aria-label="Open X account"
-              className="grid h-14 w-14 place-items-center rounded-full border border-white/55 bg-transparent text-sm tracking-[0.2em] text-white transition duration-500 hover:border-[#89cfff] hover:bg-[#89cfff]/10 hover:shadow-glow"
+              className="grid min-h-14 min-w-14 place-items-center rounded-full border border-white/55 bg-transparent px-5 text-sm tracking-[0.12em] text-white transition duration-500 hover:border-[#89cfff] hover:bg-[#89cfff]/10 hover:shadow-glow"
             >
-              X
+              公式Xをフォロー
             </a>
             <p className="text-center text-[11px] tracking-[0.18em] text-white/50">
               Copyright @roadsterMarin
@@ -165,6 +238,50 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
         </RevealSection>
       </div>
     </main>
+  );
+}
+
+type CharacterCardProps = {
+  name: string;
+  romanized: string;
+  intro: string;
+  concern: string;
+  images: string[];
+};
+
+function CharacterCard({ name, romanized, intro, concern, images }: CharacterCardProps) {
+  return (
+    <article className="rounded-[18px] border border-white/12 bg-white/[0.04] p-4 sm:p-5">
+      <div className="grid grid-cols-2 gap-2">
+        <img
+          src={withBasePath(images[0])}
+          alt={`${name}プロフィール`}
+          width="800"
+          height="800"
+          loading="lazy"
+          className="row-span-2 aspect-square h-full w-full rounded-[10px] object-cover"
+        />
+        {images.slice(1).map((image, index) => (
+          <img
+            key={image}
+            src={withBasePath(image)}
+            alt={`${name}プロフィール${index + 2}`}
+            width="800"
+            height="800"
+            loading="lazy"
+            className="aspect-square w-full rounded-[10px] object-cover"
+          />
+        ))}
+      </div>
+      <div className="mt-5">
+        <p className="text-[10px] uppercase tracking-[0.3em] text-dusk/70">{romanized}</p>
+        <h3 className="mt-2 text-xl font-medium text-white">{name}</h3>
+        <p className="mt-4 text-[0.8rem] leading-[2.15] text-white/70">{intro}</p>
+        <p className="mt-3 border-l border-[#89cfff]/60 pl-3 text-[0.75rem] leading-[2] text-white/55">
+          {concern}
+        </p>
+      </div>
+    </article>
   );
 }
 

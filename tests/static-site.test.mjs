@@ -170,3 +170,41 @@ test("検索向けmetadataと構造化データがHTMLに含まれている", as
   assert.match(html, /application\/ld\+json/);
   assert.match(html, /中古車呪縛霊まりんちゃん/);
 });
+
+test("各話ページが静的生成され、画像と前後リンクを含んでいる", async () => {
+  const first = await readFile(path.join(outDir, "comic", "001", "index.html"), "utf8");
+  const second = await readFile(path.join(outDir, "comic", "002", "index.html"), "utf8");
+
+  assert.match(first, /第1話/);
+  assert.match(first, /comics\/1\.webp\?v=/);
+  assert.match(first, /\/roadsterMarin\/comic\/002\//);
+  assert.doesNotMatch(first, /\/roadsterMarin\/comic\/000\//);
+  assert.match(second, /\/roadsterMarin\/comic\/001\//);
+  assert.match(second, /\/roadsterMarin\/comic\/003\//);
+});
+
+test("sitemapにトップページと全話のURLが含まれている", async () => {
+  const sitemap = await readFile(path.join(outDir, "sitemap.xml"), "utf8");
+  const locations = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
+
+  assert.equal(locations[0], "https://rinrituroadster.github.io/roadsterMarin/");
+  assert.ok(locations.includes("https://rinrituroadster.github.io/roadsterMarin/comic/001/"));
+  assert.ok(locations.includes("https://rinrituroadster.github.io/roadsterMarin/comic/062/"));
+  const comicFiles = (await readdir(publicComicsDir)).filter((fileName) =>
+    /^\d+\.webp$/.test(fileName)
+  );
+  assert.equal(locations.length, comicFiles.length + 1);
+});
+
+test("プロフィールとLINEスタンプの導線がトップページに含まれている", async () => {
+  const html = await readFile(path.join(outDir, "index.html"), "utf8");
+
+  for (const asset of [
+    "images/profile/1-marin.jpg",
+    "images/profile/1-owner.jpg",
+    "images/line-stamp/1.PNG",
+    "images/line-stamp/4.PNG"
+  ]) {
+    assert.match(html, new RegExp(asset.replace(/[.]/g, "\\.")), `${asset} が見つかりません`);
+  }
+});

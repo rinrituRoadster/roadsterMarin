@@ -7,6 +7,7 @@ export type ComicEntry = {
   src: string;
   alt: string;
   number: number;
+  fileName: string;
 };
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
@@ -29,7 +30,7 @@ export function getComicEntries(): ComicEntry[] {
       return {
         id: `comic-${fileName.toLowerCase()}`,
         src: withBasePath(`/comics/${fileName}?v=${version}`),
-        alt: `Comic ${String(number).padStart(2, "0")}`,
+        alt: `中古車呪縛霊まりんちゃん 第${number}話の漫画画像`,
         number,
         fileName
       };
@@ -37,6 +38,5 @@ export function getComicEntries(): ComicEntry[] {
     .sort(
       (left, right) =>
         left.number - right.number || left.fileName.localeCompare(right.fileName)
-    )
-    .map(({ fileName: _fileName, ...comic }) => comic);
+    );
 }
