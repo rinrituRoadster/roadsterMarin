@@ -185,12 +185,13 @@ test("検索向けmetadataと構造化データがHTMLに含まれている", as
   assert.match(html, /中古車呪縛霊まりんちゃん/);
 });
 
-test("Google Tag Managerが静的HTMLに含まれている", async () => {
+test("Google AnalyticsのGoogle tagが静的HTMLに含まれている", async () => {
   const html = await readFile(path.join(outDir, "index.html"), "utf8");
 
-  assert.match(html, /GTM-N9LN9CDZ/);
-  assert.match(html, /googletagmanager\.com\/gtm\.js/);
-  assert.match(html, /googletagmanager\.com\/ns\.html/);
+  assert.match(html, /G-7STMC7RZ5R/);
+  assert.match(html, /googletagmanager\.com\/gtag\/js/);
+  assert.match(html, /gtag\('config',\s*'G-7STMC7RZ5R'\)/);
+  assert.doesNotMatch(html, /GTM-N9LN9CDZ/);
 });
 
 test("各話ページが静的生成され、画像と前後リンクを含んでいる", async () => {

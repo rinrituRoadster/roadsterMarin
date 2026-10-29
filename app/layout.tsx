@@ -4,7 +4,7 @@ import "./globals.css";
 import { SITE_URL } from "@/lib/site";
 
 const SITE_URL_WITH_SLASH = `${SITE_URL}/`;
-const GTM_ID = "GTM-N9LN9CDZ";
+const GOOGLE_ANALYTICS_ID = "G-7STMC7RZ5R";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL_WITH_SLASH),
@@ -70,22 +70,14 @@ export default function RootLayout({
         <Script id="google-tag-data-layer" strategy="beforeInteractive">
           {`window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());`}
+gtag('js', new Date());
+gtag('config', '${GOOGLE_ANALYTICS_ID}');`}
         </Script>
         <Script
-          id="google-tag-manager"
-          src={`https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`}
+          id="google-analytics"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ANALYTICS_ID}`}
           strategy="afterInteractive"
         />
-        <noscript>
-          <iframe
-            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-            title="Google Tag Manager"
-          />
-        </noscript>
         {children}
       </body>
     </html>
