@@ -130,9 +130,6 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
               <p className="text-[10px] uppercase tracking-[0.32em] text-dusk/70">
                 Characters
               </p>
-              <h2 className="mt-3 text-[1rem] font-medium leading-[2.1] text-white">
-                海夢と、ご主人。
-              </h2>
             </div>
           </RevealSection>
 
@@ -141,14 +138,14 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
               name="海夢"
               romanized="MARIN / 155cm"
               intro="中古のオープンカーに憑いてきた呪縛霊の女の子。好きな音楽はシティポップ。"
-              concern="ご主人がお供え物をしてくれない。"
+              concern="最近の悩み：ご主人がお供え物をしてくれない。"
               image={`/images/profile/${characterSet}-marin.webp`}
             />
             <CharacterCard
               name="ご主人"
               romanized="GOSHUJIN / 178cm"
               intro="中古のロードスターを購入した社会人。趣味なし、恋人なし。平凡な日常を送っていた。"
-              concern="中古車に幽霊がついてきた。"
+              concern="最近の悩み：中古車に幽霊がついてきた。"
               image={`/images/profile/${characterSet}-owner.webp`}
             />
           </div>
@@ -188,7 +185,7 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
                 海夢ちゃん、LINEスタンプになりました。
               </h2>
               <p className="mt-4 text-[0.8rem] leading-[2.2] text-white/65">
-                ちょっと生意気で、ちょっと便利。
+                ちょっとシュールで、ちょっと便利。
                 <br />
                 ドライブにも日常会話にも使える、海夢ちゃんのLINEスタンプ。
               </p>
