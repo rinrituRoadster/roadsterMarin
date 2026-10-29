@@ -89,10 +89,6 @@ export function ComicGallery({
     }
   }, [currentIndex, hasRestoredProgress]);
 
-  useEffect(() => {
-    setIsCurrentImageLoaded(false);
-  }, [currentIndex, retryVersion]);
-
   if (galleryItems.length === 0) {
     return null;
   }
@@ -143,12 +139,14 @@ export function ComicGallery({
     const nextPage = Math.floor(nextIndex / ITEMS_PER_PAGE);
 
     if (currentPage === nextPage) {
+      setIsCurrentImageLoaded(false);
       setCurrentIndex(nextIndex);
       return;
     }
 
     isTransitioning.current = true;
     setBatchPhase("loading");
+    setIsCurrentImageLoaded(false);
 
     const [failedSource] = await Promise.all([
       preloadBatch(nextIndex),
@@ -166,6 +164,7 @@ export function ComicGallery({
     setBatchPhase("success");
     await wait(BATCH_SUCCESS_MS);
     setCurrentIndex(nextIndex);
+    setIsCurrentImageLoaded(true);
     setBatchPhase("idle");
     isTransitioning.current = false;
   };
@@ -304,6 +303,7 @@ export function ComicGallery({
           max={galleryItems.length - 1}
           min="0"
           onChange={(event) => {
+            setIsCurrentImageLoaded(false);
             setCurrentIndex(Number(event.target.value));
             setFailedImage(null);
             setRetryVersion(0);
