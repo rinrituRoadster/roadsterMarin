@@ -51,6 +51,7 @@ export function ComicGallery({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasRestoredProgress, setHasRestoredProgress] = useState(false);
   const [failedImage, setFailedImage] = useState<string | null>(null);
+  const [isCurrentImageLoaded, setIsCurrentImageLoaded] = useState(false);
   const [retryVersion, setRetryVersion] = useState(0);
   const [batchPhase, setBatchPhase] = useState<"idle" | "loading" | "success">("idle");
   const isTransitioning = useRef(false);
@@ -87,6 +88,10 @@ export function ComicGallery({
       // Ignore storage restrictions without interrupting comic navigation.
     }
   }, [currentIndex, hasRestoredProgress]);
+
+  useEffect(() => {
+    setIsCurrentImageLoaded(false);
+  }, [currentIndex, retryVersion]);
 
   if (galleryItems.length === 0) {
     return null;
@@ -223,15 +228,30 @@ export function ComicGallery({
 
               void goToIndex(Math.max(currentIndex - 1, 0));
             }}
-            className="block w-full overflow-hidden rounded-[8px] text-left sm:rounded-[24px]"
+            className="relative block aspect-[2/3] w-full overflow-hidden rounded-[8px] text-left sm:rounded-[24px]"
           >
+            {!isCurrentImageLoaded ? (
+              <span className="absolute inset-0 z-10 grid place-items-center bg-navy/35">
+                <img
+                  src={loadingImageSrc}
+                  alt="漫画を読み込み中"
+                  className="w-[120px] max-w-[35%] object-contain opacity-90 sm:w-[160px]"
+                />
+              </span>
+            ) : null}
             <img
               key={`${currentItem.src}-${retryVersion}`}
               src={currentImageSrc}
               alt={currentItem.alt}
-              onLoad={() => setFailedImage(null)}
-              onError={() => setFailedImage(currentItem.src)}
-              className="block w-full rounded-[8px] object-cover sm:rounded-[24px]"
+              onLoad={() => {
+                setFailedImage(null);
+                setIsCurrentImageLoaded(true);
+              }}
+              onError={() => {
+                setFailedImage(currentItem.src);
+                setIsCurrentImageLoaded(false);
+              }}
+              className={`block h-full w-full rounded-[8px] object-contain transition-opacity duration-300 sm:rounded-[24px] ${isCurrentImageLoaded ? "opacity-100" : "opacity-0"}`}
             />
           </button>
         )}
