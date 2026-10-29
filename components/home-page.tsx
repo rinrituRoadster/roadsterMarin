@@ -107,16 +107,14 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
                   Neo Nostalgia / City Pop / Heisei x Reiwa
                 </p>
                 <h1 className="text-balance text-left text-[1rem] font-medium leading-[2.1] text-white sm:text-[1.75rem]">
-                  今日どこへ行こうか。
+                  中古のロードスターには
                   <br />
-                  そんな毎日が続く。
-                  <br />
-                  ノスタルジックロードコメディ
+                  幽霊少女が憑いていました。
                 </h1>
                 <p className="mt-7 max-w-[26rem] text-left text-[0.8rem] leading-[2.35] text-white/74">
-                  海沿いを夜に走るオープンカーみたいに、静かで、少しだけ胸が鳴る。
+                  海沿いを走るときみたいな少しだけ胸が鳴るノスタルジックロードコメディ
                   <br />
-                  あの頃の海風を令和のふたりが届けます。
+                  あの頃の海風を令和のふたりが届けます
                 </p>
               </div>
             </RevealSection>
@@ -130,7 +128,7 @@ export function HomePage({ comics, heroImages }: HomePageProps) {
                 Comics
               </p>
               <h2 className="mt-3 text-[1rem] font-medium leading-[2.1] text-white">
-                横スライドと下部バーで先の話数まで移動できます。
+                画像の右側タップで次話、左側タップで前話に推移できます。
               </h2>
               <p className="mt-3 text-[0.78rem] leading-[2.35] text-white/65">
                 （原作小説はcomming soon...!）
